@@ -30,3 +30,4 @@ export const PriceForecastPage: React.FC = () => {
     </div>
   );
 };
+

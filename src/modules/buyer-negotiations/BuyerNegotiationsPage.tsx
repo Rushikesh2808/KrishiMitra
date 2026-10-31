@@ -23,3 +23,4 @@ export const BuyerNegotiationsPage: React.FC = () => {
     </div>
   );
 };
+

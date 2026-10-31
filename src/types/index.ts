@@ -93,3 +93,4 @@ export interface FarmerProfile {
   preferredLanguage: 'English' | 'Marathi' | 'Hindi';
   defaultCrops: string[];
 }
+

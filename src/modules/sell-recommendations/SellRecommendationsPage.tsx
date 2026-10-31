@@ -23,3 +23,4 @@ export const SellRecommendationsPage: React.FC = () => {
     </div>
   );
 };
+

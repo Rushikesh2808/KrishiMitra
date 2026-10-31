@@ -20,3 +20,4 @@ export const formatQuintals = (quintals: number): string => {
 export const formatPerQuintal = (amount: number): string => {
   return `${formatINR(amount)}/Qtl`;
 };
+

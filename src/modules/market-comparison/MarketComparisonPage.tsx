@@ -23,3 +23,4 @@ export const MarketComparisonPage: React.FC = () => {
     </div>
   );
 };
+

@@ -32,3 +32,4 @@ export const CropSelectionPage: React.FC = () => {
     </div>
   );
 };
+

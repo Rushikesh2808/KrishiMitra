@@ -54,3 +54,4 @@ export const calculateNetEarnings = (input: NetEarningsInput): NetEarningsResult
     netEarningsPerQuintal,
   };
 };
+
