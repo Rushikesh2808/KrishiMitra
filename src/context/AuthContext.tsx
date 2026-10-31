@@ -10,6 +10,7 @@ interface AuthContextType {
   register: (user: UserAccount) => void;
   logout: () => void;
   switchRole: (role: UserRole) => void;
+  updateProfile: (updatedData: Partial<UserAccount>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,6 +76,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loginAsDemo(role);
   };
 
+  const updateProfile = (updatedData: Partial<UserAccount>) => {
+    setCurrentUser((prev) => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        ...updatedData,
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save updated profile to localStorage', e);
+      }
+      return updated;
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -85,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         switchRole,
+        updateProfile,
       }}
     >
       {children}
@@ -99,3 +117,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+

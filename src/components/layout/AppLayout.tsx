@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { UserRole } from '../../types';
 import {
   LayoutDashboard,
@@ -21,10 +22,11 @@ import {
   Building2,
   Layers,
   ShoppingCart,
-  Repeat
+  Settings
 } from 'lucide-react';
-import { MOCK_NOTIFICATIONS } from '../../data/mockData';
+import { getNotifications } from '../../data/marketplaceStore';
 import { NotificationDrawer } from '../../modules/dashboard/components/NotificationDrawer';
+import { LanguageSelector } from '../common/LanguageSelector';
 
 interface NavItem {
   to: string;
@@ -36,6 +38,7 @@ interface NavItem {
 
 export const AppLayout: React.FC = () => {
   const { currentUser, logout, switchRole } = useAuth();
+  const { language, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [notificationDrawerOpen, setNotificationDrawerOpen] = React.useState(false);
   const location = useLocation();
@@ -59,33 +62,42 @@ export const AppLayout: React.FC = () => {
 
   // Farmer Navigation
   const farmerNavItems: NavItem[] = [
-    { to: '/', label: 'Farmer Dashboard', marathiLabel: 'मुख्य पृष्ठ', icon: LayoutDashboard },
-    { to: '/crop-selection', label: 'Crops & Produce', marathiLabel: 'पिके आणि साठा', icon: Wheat },
-    { to: '/market-comparison', label: 'Mandi Comparison', marathiLabel: 'बाजारभाव तुलना', icon: Store },
-    { to: '/price-forecast', label: '10-Day Forecast', marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
-    { to: '/sell-recommendations', label: 'Sell vs Wait Advisor', marathiLabel: 'विक्री सल्ला', icon: Compass, badge: 'Smart' },
-    { to: '/net-earnings', label: 'Net Earnings Calc', marathiLabel: 'निव्वळ नफा', icon: Calculator },
-    { to: '/fpo-marketplace', label: 'FPO & Buyers', marathiLabel: 'थेट खरेदीदार', icon: Users },
-    { to: '/profile', label: 'Farmer Profile', marathiLabel: 'शेतकरी माहिती', icon: User },
+    { to: '/', label: t('nav.farmerDashboard'), marathiLabel: 'मुख्य पृष्ठ', icon: LayoutDashboard },
+    { to: '/crop-selection', label: t('nav.cropsAndStock'), marathiLabel: 'पिके आणि साठा', icon: Wheat },
+    { to: '/market-comparison', label: t('nav.mandiComparison'), marathiLabel: 'बाजारभाव तुलना', icon: Store },
+    { to: '/price-forecast', label: t('nav.priceForecast'), marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
+    { to: '/sell-recommendations', label: t('nav.sellAdvisor'), marathiLabel: 'विक्री सल्ला', icon: Compass, badge: 'AI' },
+    { to: '/net-earnings', label: t('nav.netEarnings'), marathiLabel: 'निव्वळ नफा', icon: Calculator },
+    { to: '/fpo-marketplace', label: t('nav.fpoMarketplace'), marathiLabel: 'थेट खरेदीदार', icon: Users, badge: 'Direct' },
+    { to: '/notifications', label: t('nav.notifications'), marathiLabel: 'सूचना केंद्र', icon: Bell },
+    { to: '/settings', label: t('nav.settings'), marathiLabel: 'सेटिंग्ज', icon: Settings },
+    { to: '/profile', label: t('nav.profile'), marathiLabel: 'शेतकरी माहिती', icon: User },
   ];
 
   // FPO Navigation
   const fpoNavItems: NavItem[] = [
-    { to: '/fpo', label: 'FPO Hub Dashboard', marathiLabel: 'FPO मुख्य पृष्ठ', icon: Layers },
-    { to: '/market-comparison', label: 'APMC Benchmarks', marathiLabel: 'बाजारभाव तुलना', icon: Store },
-    { to: '/price-forecast', label: 'Price Forecasting', marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
-    { to: '/net-earnings', label: 'Net Earnings Engine', marathiLabel: 'निव्वळ नफा', icon: Calculator },
-    { to: '/fpo-marketplace', label: 'Buyer Directory', marathiLabel: 'खरेदीदार नेटवर्क', icon: Building2 },
-    { to: '/profile', label: 'FPO Profile', marathiLabel: 'संस्था माहिती', icon: User },
+    { to: '/fpo', label: t('nav.fpoDashboard'), marathiLabel: 'FPO मुख्य पृष्ठ', icon: Layers },
+    { to: '/crop-selection', label: t('nav.cropsAndStock'), marathiLabel: 'शेतकरी साठा संकलन', icon: Wheat },
+    { to: '/market-comparison', label: t('nav.mandiComparison'), marathiLabel: 'बाजारभाव तुलना', icon: Store },
+    { to: '/price-forecast', label: t('nav.priceForecast'), marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
+    { to: '/net-earnings', label: t('nav.netEarnings'), marathiLabel: 'निव्वळ नफा', icon: Calculator },
+    { to: '/fpo-marketplace', label: t('nav.buyerDirectory'), marathiLabel: 'खरेदीदार नेटवर्क', icon: Building2 },
+    { to: '/notifications', label: t('nav.notifications'), marathiLabel: 'सूचना केंद्र', icon: Bell },
+    { to: '/settings', label: t('nav.settings'), marathiLabel: 'सेटिंग्ज', icon: Settings },
+    { to: '/profile', label: t('nav.profile'), marathiLabel: 'संस्था माहिती', icon: User },
   ];
 
   // Buyer Navigation
   const buyerNavItems: NavItem[] = [
-    { to: '/buyer', label: 'Buyer Dashboard', marathiLabel: 'खरेदीदार मुख्य पृष्ठ', icon: ShoppingCart },
-    { to: '/market-comparison', label: 'APMC Spot Rates', marathiLabel: 'बाजारभाव तुलना', icon: Store },
-    { to: '/price-forecast', label: '10-Day Market Trends', marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
-    { to: '/net-earnings', label: 'Freight & Cost Calc', marathiLabel: 'खर्च गणक', icon: Calculator },
-    { to: '/profile', label: 'Company Profile', marathiLabel: 'कंपनी माहिती', icon: User },
+    { to: '/buyer', label: t('nav.buyerDashboard'), marathiLabel: 'खरेदीदार मुख्य पृष्ठ', icon: ShoppingCart },
+    { to: '/crop-selection', label: t('nav.cropsAndStock'), marathiLabel: 'शेतमाल शोध', icon: Wheat },
+    { to: '/market-comparison', label: t('nav.mandiComparison'), marathiLabel: 'बाजारभाव तुलना', icon: Store },
+    { to: '/price-forecast', label: t('nav.priceForecast'), marathiLabel: 'किंमत अंदाज', icon: TrendingUp },
+    { to: '/net-earnings', label: t('nav.netEarnings'), marathiLabel: 'खर्च गणक', icon: Calculator },
+    { to: '/fpo-marketplace', label: t('nav.fpoMarketplace'), marathiLabel: 'उत्पादक बाजार', icon: Users },
+    { to: '/notifications', label: t('nav.notifications'), marathiLabel: 'सूचना केंद्र', icon: Bell },
+    { to: '/settings', label: t('nav.settings'), marathiLabel: 'सेटिंग्ज', icon: Settings },
+    { to: '/profile', label: t('nav.profile'), marathiLabel: 'कंपनी माहिती', icon: User },
   ];
 
   const activeNavItems =
@@ -95,31 +107,39 @@ export const AppLayout: React.FC = () => {
       ? buyerNavItems
       : farmerNavItems;
 
-  // Mobile Bottom Nav
+  // Mobile Bottom Nav (5 key items)
   const mobileNavItems: NavItem[] =
     currentUser?.role === 'FPO'
       ? [
-          { to: '/fpo', label: 'FPO Hub', icon: Layers },
-          { to: '/market-comparison', label: 'Mandis', icon: Store },
-          { to: '/price-forecast', label: 'Forecast', icon: TrendingUp },
-          { to: '/net-earnings', label: 'Earnings', icon: Calculator },
+          { to: '/fpo', label: t('nav.fpoDashboard').split(' ')[0] || 'FPO', icon: Layers },
+          { to: '/crop-selection', label: t('nav.cropsAndStock').split(' ')[0] || 'Produce', icon: Wheat },
+          { to: '/fpo-marketplace', label: 'Buyers', icon: Building2 },
+          { to: '/notifications', label: 'Alerts', icon: Bell },
           { to: '/profile', label: 'Profile', icon: User },
         ]
       : currentUser?.role === 'BUYER'
       ? [
-          { to: '/buyer', label: 'Buyer Hub', icon: ShoppingCart },
-          { to: '/market-comparison', label: 'Mandis', icon: Store },
-          { to: '/price-forecast', label: 'Forecast', icon: TrendingUp },
-          { to: '/net-earnings', label: 'Costs', icon: Calculator },
+          { to: '/buyer', label: 'Buyer', icon: ShoppingCart },
+          { to: '/crop-selection', label: 'Lots', icon: Wheat },
+          { to: '/fpo-marketplace', label: 'Market', icon: Store },
+          { to: '/notifications', label: 'Alerts', icon: Bell },
           { to: '/profile', label: 'Profile', icon: User },
         ]
       : [
-          { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+          { to: '/', label: 'Home', icon: LayoutDashboard },
+          { to: '/crop-selection', label: 'Produce', icon: Wheat },
           { to: '/market-comparison', label: 'Mandis', icon: Store },
-          { to: '/price-forecast', label: 'Forecast', icon: TrendingUp },
-          { to: '/net-earnings', label: 'Earnings', icon: Calculator },
+          { to: '/notifications', label: 'Alerts', icon: Bell },
           { to: '/sell-recommendations', label: 'Advisory', icon: Compass },
         ];
+
+  const homeRoute =
+    currentUser?.role === 'FPO' ? '/fpo' : currentUser?.role === 'BUYER' ? '/buyer' : '/';
+
+  const unreadAlertsCount = React.useMemo(() => {
+    if (!currentUser?.role) return 0;
+    return getNotifications(currentUser.role).filter((n) => !n.read).length;
+  }, [currentUser?.role, notificationDrawerOpen]);
 
   return (
     <div className="min-h-screen flex flex-col bg-earth-50 text-slate-800">
@@ -138,7 +158,7 @@ export const AppLayout: React.FC = () => {
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
 
-              <NavLink to="/" className="flex items-center space-x-2">
+              <NavLink to={homeRoute} className="flex items-center space-x-2">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white flex items-center justify-center text-agri-700 shadow-sm shrink-0">
                   <Wheat className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
@@ -155,21 +175,36 @@ export const AppLayout: React.FC = () => {
                           : 'bg-agri-950 text-amber-300 border-agri-600/50'
                       }`}
                     >
-                      {currentUser?.role || 'FARMER'}
+                      {currentUser?.role === 'FPO'
+                        ? t('roles.fpo')
+                        : currentUser?.role === 'BUYER'
+                        ? t('roles.buyer')
+                        : t('roles.farmer')}
                     </span>
                   </div>
                   <p className="text-[10px] sm:text-[11px] text-agri-200 hidden sm:block">
-                    Market & Net-Earning Advisory Ecosystem
+                    {language === 'mr'
+                      ? 'शेतकरी बाजारभाव, नफा गणक आणि थेट खरेदीदार परिसंस्था'
+                      : language === 'hi'
+                      ? 'मंडी भाव, शुद्ध लाभ और प्रत्यक्ष क्रेता-विक्रेता मंच'
+                      : 'Market & Net-Earning Advisory Ecosystem'}
                   </p>
                 </div>
               </NavLink>
             </div>
 
-            {/* Right: Evaluator Role Switcher & User Profile & Logout */}
+            {/* Right: Language Selector, Quick Role Switcher, Profile, Notifications & Logout */}
             <div className="flex items-center space-x-2 sm:space-x-3">
+              {/* Language Selector (Desktop & Tablet) */}
+              <div className="hidden sm:block">
+                <LanguageSelector variant="compact" />
+              </div>
+
               {/* Evaluator Quick Role Switcher */}
               <div className="hidden xl:flex items-center space-x-1 bg-agri-950/60 p-1 rounded-xl border border-agri-700/60 text-xs">
-                <span className="text-[10px] text-agri-300 uppercase font-bold px-2">Role:</span>
+                <span className="text-[10px] text-agri-300 uppercase font-bold px-2">
+                  {t('nav.switchRole')}:
+                </span>
                 <button
                   type="button"
                   onClick={() => handleRoleSwitch('FARMER')}
@@ -177,7 +212,7 @@ export const AppLayout: React.FC = () => {
                     currentUser?.role === 'FARMER' ? 'bg-agri-700 text-white shadow-xs' : 'text-agri-200 hover:text-white'
                   }`}
                 >
-                  Farmer
+                  {t('roles.farmer')}
                 </button>
                 <button
                   type="button"
@@ -195,7 +230,7 @@ export const AppLayout: React.FC = () => {
                     currentUser?.role === 'BUYER' ? 'bg-blue-700 text-white shadow-xs' : 'text-agri-200 hover:text-white'
                   }`}
                 >
-                  Buyer
+                  {language === 'mr' ? 'खरेदीदार' : language === 'hi' ? 'क्रेता' : 'Buyer'}
                 </button>
               </div>
 
@@ -217,15 +252,20 @@ export const AppLayout: React.FC = () => {
                 </div>
               </NavLink>
 
-              {/* Notifications */}
+              {/* Notifications Bell */}
               <button
                 type="button"
                 onClick={() => setNotificationDrawerOpen(true)}
                 className="p-2 rounded-xl text-agri-200 hover:text-white hover:bg-agri-700/60 relative cursor-pointer"
-                title="Notifications"
+                title={t('nav.notifications')}
+                aria-label={t('nav.notifications')}
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400" />
+                {unreadAlertsCount > 0 && (
+                  <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] flex items-center justify-center shadow-xs">
+                    {unreadAlertsCount}
+                  </span>
+                )}
               </button>
 
               {/* Logout Button */}
@@ -233,7 +273,8 @@ export const AppLayout: React.FC = () => {
                 type="button"
                 onClick={handleLogout}
                 className="p-2 rounded-xl text-agri-200 hover:text-rose-200 hover:bg-rose-900/40 transition-colors cursor-pointer"
-                title="Logout"
+                title={t('nav.logout')}
+                aria-label={t('nav.logout')}
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -246,7 +287,11 @@ export const AppLayout: React.FC = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-center space-x-1.5 text-[10px] sm:text-[11px] text-amber-200 font-medium">
             <ShieldAlert className="w-3.5 h-3.5 text-amber-300 shrink-0" />
             <span>
-              Seva First Innovation Challenge Prototype: 3-Role Architecture Active • Real-Time Role Switching Enabled
+              {language === 'mr'
+                ? 'कृषिमित्र - ३-भूमिका प्रणाली (शेतकरी, FPO, खरेदीदार) • बहुभाषिक सहाय्य • तात्काळ भूमिका बदल सक्षम'
+                : language === 'hi'
+                ? 'कृषिमित्र - ३-भूमिका प्रणाली (किसान, FPO, क्रेता) • बहुभाषी समर्थन • तत्काल भूमिका परिवर्तन सक्रिय'
+                : 'Seva First Innovation Challenge Prototype: 3-Role Architecture Active • Multilingual System • Real-Time Role Switching Enabled'}
             </span>
           </div>
         </div>
@@ -257,8 +302,10 @@ export const AppLayout: React.FC = () => {
         {/* Desktop Sidebar Navigation */}
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 py-6 px-4 shrink-0">
           <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-3 flex items-center justify-between">
-            <span>{currentUser?.role || 'FARMER'} Portal</span>
-            <span className="text-[10px] text-agri-700 font-semibold">Active</span>
+            <span>
+              {currentUser?.role || 'FARMER'} {t('nav.portal')}
+            </span>
+            <span className="text-[10px] text-agri-700 font-semibold">{t('nav.active')}</span>
           </div>
 
           <nav className="space-y-1">
@@ -286,6 +333,11 @@ export const AppLayout: React.FC = () => {
                       {item.badge}
                     </span>
                   )}
+                  {item.to === '/notifications' && unreadAlertsCount > 0 && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white">
+                      {unreadAlertsCount}
+                    </span>
+                  )}
                 </NavLink>
               );
             })}
@@ -295,23 +347,23 @@ export const AppLayout: React.FC = () => {
             {/* Quick Role Switcher in Sidebar */}
             <div className="p-3 bg-earth-100/70 rounded-xl border border-earth-200 text-xs space-y-2">
               <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
-                Switch Role / भूमिका बदला:
+                {t('nav.switchRole')}:
               </span>
               <div className="grid grid-cols-3 gap-1">
                 <button
                   type="button"
                   onClick={() => handleRoleSwitch('FARMER')}
-                  className={`py-1 rounded text-[11px] font-bold cursor-pointer ${
-                    currentUser?.role === 'FARMER' ? 'bg-agri-700 text-white' : 'bg-white text-slate-700'
+                  className={`py-1 rounded text-[11px] font-bold cursor-pointer transition-colors ${
+                    currentUser?.role === 'FARMER' ? 'bg-agri-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  Farmer
+                  {t('roles.farmer')}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRoleSwitch('FPO')}
-                  className={`py-1 rounded text-[11px] font-bold cursor-pointer ${
-                    currentUser?.role === 'FPO' ? 'bg-emerald-700 text-white' : 'bg-white text-slate-700'
+                  className={`py-1 rounded text-[11px] font-bold cursor-pointer transition-colors ${
+                    currentUser?.role === 'FPO' ? 'bg-emerald-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   FPO
@@ -319,11 +371,11 @@ export const AppLayout: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleSwitch('BUYER')}
-                  className={`py-1 rounded text-[11px] font-bold cursor-pointer ${
-                    currentUser?.role === 'BUYER' ? 'bg-blue-700 text-white' : 'bg-white text-slate-700'
+                  className={`py-1 rounded text-[11px] font-bold cursor-pointer transition-colors ${
+                    currentUser?.role === 'BUYER' ? 'bg-blue-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  Buyer
+                  {language === 'mr' ? 'खरेदीदार' : language === 'hi' ? 'क्रेता' : 'Buyer'}
                 </button>
               </div>
             </div>
@@ -334,7 +386,7 @@ export const AppLayout: React.FC = () => {
               className="w-full py-2 px-3 rounded-xl border border-slate-200 text-slate-600 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
+              <span>{t('nav.logout')}</span>
             </button>
           </div>
         </aside>
@@ -350,7 +402,7 @@ export const AppLayout: React.FC = () => {
               <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-agri-800 text-white">
                 <div className="flex items-center space-x-2">
                   <Wheat className="w-5 h-5 text-agri-300" />
-                  <span className="font-bold text-base">KrishiMitra Navigation</span>
+                  <span className="font-bold text-base">KrishiMitra</span>
                 </div>
                 <button
                   type="button"
@@ -359,6 +411,14 @@ export const AppLayout: React.FC = () => {
                 >
                   <X className="w-5 h-5" />
                 </button>
+              </div>
+
+              {/* Language Selection inside Mobile Drawer */}
+              <div className="p-3 bg-earth-50 border-b border-earth-200">
+                <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2">
+                  {t('common.language')} / भाषा निवडा:
+                </div>
+                <LanguageSelector variant="pills" />
               </div>
 
               {/* User info banner inside drawer */}
@@ -372,7 +432,7 @@ export const AppLayout: React.FC = () => {
               {/* Role Switcher in Mobile Drawer */}
               <div className="p-3 bg-slate-50 border-b border-slate-200 space-y-1.5">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                  Switch Active Role:
+                  {t('nav.switchRole')}:
                 </span>
                 <div className="grid grid-cols-3 gap-1 text-xs">
                   <button
@@ -382,7 +442,7 @@ export const AppLayout: React.FC = () => {
                       currentUser?.role === 'FARMER' ? 'bg-agri-700 text-white' : 'bg-white text-slate-700 border'
                     }`}
                   >
-                    Farmer
+                    {t('roles.farmer')}
                   </button>
                   <button
                     type="button"
@@ -400,7 +460,7 @@ export const AppLayout: React.FC = () => {
                       currentUser?.role === 'BUYER' ? 'bg-blue-700 text-white' : 'bg-white text-slate-700 border'
                     }`}
                   >
-                    Buyer
+                    {language === 'mr' ? 'खरेदीदार' : language === 'hi' ? 'क्रेता' : 'Buyer'}
                   </button>
                 </div>
               </div>
@@ -425,7 +485,7 @@ export const AppLayout: React.FC = () => {
                         <Icon className="w-5 h-5 text-agri-700" />
                         <div>
                           <div>{item.label}</div>
-                          {item.marathiLabel && (
+                          {item.marathiLabel && language !== 'mr' && (
                             <div className="text-[10px] text-slate-400 font-normal">
                               {item.marathiLabel}
                             </div>
@@ -445,7 +505,7 @@ export const AppLayout: React.FC = () => {
                   className="w-full py-2 bg-rose-50 text-rose-700 rounded-xl text-xs font-bold border border-rose-200 flex items-center justify-center space-x-1"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Log Out</span>
+                  <span>{t('nav.logout')}</span>
                 </button>
               </div>
             </div>
@@ -482,7 +542,14 @@ export const AppLayout: React.FC = () => {
                   }`
                 }
               >
-                <Icon className="w-5 h-5 mb-0.5" />
+                <div className="relative">
+                  <Icon className="w-5 h-5 mb-0.5" />
+                  {item.to === '/notifications' && unreadAlertsCount > 0 && (
+                    <span className="absolute -top-1 -right-2 w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 font-black text-[8px] flex items-center justify-center">
+                      {unreadAlertsCount}
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] truncate">{item.label}</span>
               </NavLink>
             );

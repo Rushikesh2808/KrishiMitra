@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, Sparkles, Check, RefreshCw } from 'lucide-react';
 import { MOCK_CROPS, CURRENT_FARMER } from '../../../data/mockData';
 import { formatQuintals } from '../../../utils/currency';
+import { useLanguage } from '../../../context/LanguageContext';
 
 interface WelcomeSectionProps {
   selectedCropId: string;
@@ -20,6 +21,7 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
   isRefreshing,
   onRefresh,
 }) => {
+  const { language, t } = useLanguage();
   const activeCrop = MOCK_CROPS.find((c) => c.id === selectedCropId) || MOCK_CROPS[0];
 
   return (
@@ -29,14 +31,24 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
         <div>
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-agri-950/60 text-agri-200 text-xs font-medium mb-2 border border-agri-600/40">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>AI Market & Net-Earning Advisor • Seva First Challenge</span>
+            <span>
+              {language === 'mr'
+                ? 'कृषिमित्र - नफा सल्ला व थेट बाजारपेठ'
+                : language === 'hi'
+                ? 'कृषिमित्र - लाभ सलाहकार और प्रत्यक्ष बाज़ार'
+                : 'AI Market & Net-Earning Advisor • Seva First Challenge'}
+            </span>
           </div>
 
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
-            Namaskar, {CURRENT_FARMER.fullName} 🙏
+            {t('dashboard.welcome')}, {CURRENT_FARMER.fullName} 🙏
           </h1>
           <p className="text-agri-300 text-xs sm:text-sm mt-1">
-            <span className="font-medium text-white">नमस्कार शेतकरी मित्र</span> — Compare real in-hand earnings before sending produce to APMC mandis.
+            {language === 'mr'
+              ? 'बाजार समितीत जाण्यापूर्वी निव्वळ नफा आणि वाहतूक खर्चाची तुलना करा.'
+              : language === 'hi'
+              ? 'मंडी जाने से पहले शुद्ध लाभ और परिवहन लागत की तुलना करें।'
+              : 'Compare real in-hand earnings before sending produce to APMC mandis.'}
           </p>
         </div>
 

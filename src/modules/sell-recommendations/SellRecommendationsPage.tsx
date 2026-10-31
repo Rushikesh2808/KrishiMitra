@@ -1,5 +1,6 @@
 import React from 'react';
 import { analyzeSellVsWait } from '../../services/advisoryService';
+import { useLanguage } from '../../context/LanguageContext';
 import { AdvisoryInputControls } from './components/AdvisoryInputControls';
 import { AdvisoryHeroCard } from './components/AdvisoryHeroCard';
 import { ScenarioComparisonCards } from './components/ScenarioComparisonCards';
@@ -9,6 +10,7 @@ import { Compass, ShieldAlert, Store, TrendingUp, ArrowRight } from 'lucide-reac
 import { NavLink } from 'react-router-dom';
 
 export const SellRecommendationsPage: React.FC = () => {
+  const { language, t } = useLanguage();
   // 1. Interactive States
   const [selectedCropId, setSelectedCropId] = React.useState<string>('crop-soybean');
   const [selectedMandiId, setSelectedMandiId] = React.useState<string>('m-lasalgaon');
@@ -55,10 +57,10 @@ export const SellRecommendationsPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Sell Now vs Wait Recommendations
+              {t('advisor.title')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500">
-              विक्री की साठवणूक सल्लागार — Holding cost, spoilage risk & net-earnings comparison engine
+              {t('advisor.subtitle')}
             </p>
           </div>
         </div>

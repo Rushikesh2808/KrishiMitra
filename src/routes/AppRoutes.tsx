@@ -15,6 +15,7 @@ import { FpoMarketplacePage } from '../modules/fpo-marketplace/FpoMarketplacePag
 import { BuyerNegotiationsPage } from '../modules/buyer-negotiations/BuyerNegotiationsPage';
 import { ProfilePage } from '../modules/profile/ProfilePage';
 import { SettingsPage } from '../modules/settings/SettingsPage';
+import { NotificationsPage } from '../modules/notifications/NotificationsPage';
 import { NotFoundPage } from '../modules/common/NotFoundPage';
 
 export const AppRoutes: React.FC = () => {
@@ -26,8 +27,15 @@ export const AppRoutes: React.FC = () => {
       {/* Protected Routes inside App Shell Layout */}
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          {/* Farmer Root Dashboard */}
-          <Route path="/" element={<DashboardPage />} />
+          {/* Farmer Root Dashboard (Role Protected for FARMER) */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute allowedRoles={['FARMER']}>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* FPO Dashboard (Role Protected for FPO) */}
           <Route
@@ -59,6 +67,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="buyer-negotiations" element={<BuyerNegotiationsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
 
           {/* Catch-all 404 */}
           <Route path="*" element={<NotFoundPage />} />

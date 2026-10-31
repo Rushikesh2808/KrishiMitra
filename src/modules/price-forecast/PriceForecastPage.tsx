@@ -1,5 +1,6 @@
 import React from 'react';
 import { get10DayCropForecast } from '../../services/forecastService';
+import { useLanguage } from '../../context/LanguageContext';
 import { ForecastSelector } from './components/ForecastSelector';
 import { ForecastChart } from './components/ForecastChart';
 import { ForecastSummaryCards } from './components/ForecastSummaryCards';
@@ -9,6 +10,7 @@ import { TrendingUp, ShieldAlert, Store, ArrowRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 export const PriceForecastPage: React.FC = () => {
+  const { language, t } = useLanguage();
   // 1. Interactive States
   const [selectedCropId, setSelectedCropId] = React.useState<string>('crop-soybean');
   const [selectedMandiId, setSelectedMandiId] = React.useState<string>('m-lasalgaon');
@@ -29,10 +31,10 @@ export const PriceForecastPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              10-Day Crop Price Forecast
+              {t('forecast.title')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500">
-              १० दिवसांचा बाजारभाव अंदाज — Probabilistic price trajectories with confidence bands
+              {t('forecast.subtitle')}
             </p>
           </div>
         </div>

@@ -6,6 +6,7 @@ import {
   computeMandiComparisons
 } from '../../utils/calculations';
 import { MOCK_CROPS } from '../../data/mockData';
+import { useLanguage } from '../../context/LanguageContext';
 import { CalculatorInputForm } from './components/CalculatorInputForm';
 import { FinancialSummaryCard } from './components/FinancialSummaryCard';
 import { ExpenseDistributionChart } from './components/ExpenseDistributionChart';
@@ -14,6 +15,7 @@ import { Calculator, ShieldAlert, TrendingUp, Store, ArrowRight } from 'lucide-r
 import { NavLink } from 'react-router-dom';
 
 export const NetEarningsPage: React.FC = () => {
+  const { language, t } = useLanguage();
   // 1. Initial State: Loaded with Lasalgaon APMC defaults for 50 Qtl of Soybean
   const [inputs, setInputs] = React.useState<DetailedExpenseInputs>(() =>
     getDefaultMandiExpenseInputs('crop-soybean', 'm-lasalgaon', 50, 'v-niphad')
@@ -84,10 +86,10 @@ export const NetEarningsPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Net Earnings Calculator
+              {t('calculator.title')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500">
-              निव्वळ नफा गणक — Calculate your true in-hand money after transport, storage, and APMC fees
+              {t('calculator.subtitle')}
             </p>
           </div>
         </div>

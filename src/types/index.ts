@@ -137,16 +137,49 @@ export interface UserAccount {
   taluka?: string;
   district?: string;
   state?: string;
+  landAcreage?: number;
+  storageType?: string;
+  preferredLanguage?: 'English' | 'Marathi' | 'Hindi';
   preferredCrops?: string[];
   
   // FPO fields
   organizationName?: string;
   authorizedPerson?: string;
+  designation?: string;
   registrationNumber?: string;
   operatingLocation?: string;
+  establishedYear?: number;
+  activeMembersCount?: number;
+  facilities?: string[];
 
   // Buyer fields
   businessName?: string;
   contactPerson?: string;
   buyerType?: 'Agri-Processor' | 'Bulk Wholesaler' | 'Exporter' | 'Retail Chain';
+  gstNumber?: string;
+  defaultPaymentTerms?: string;
+}
+
+export interface FarmerCropRecord {
+  id: string;
+  farmerId: string;
+  farmerName: string;
+  village: string;
+  district: string;
+  cropName: string;
+  cropVariety: string;
+  cultivationAreaAcres: number;
+  sowingDate: string;
+  expectedHarvestDate: string;
+  expectedQuantityQuintals: number;
+  actualHarvestedQuantity: number;
+  listedQuantity: number;
+  committedQuantity: number;
+  availableQuantity: number; // actualHarvestedQuantity - listedQuantity - committedQuantity
+  cropQuality: 'Grade A (Export)' | 'Grade A (Commercial)' | 'Grade B (FAQ)';
+  storageStatus: 'On-Farm Dry Shed' | 'Warehouse Pallets' | 'Kanda Chawl' | 'Awaiting Storage' | 'Sold Out';
+  storageLocation: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MOCK_CROPS, FARMER_VILLAGES } from '../../data/mockData';
 import { computeMandiComparisons } from '../../utils/calculations';
+import { useLanguage } from '../../context/LanguageContext';
 import { MandiFilterHeader } from './components/MandiFilterHeader';
 import { MandiProfitInsightBanner } from './components/MandiProfitInsightBanner';
 import { MandiComparisonChart } from './components/MandiComparisonChart';
@@ -9,6 +10,7 @@ import { MandiComparisonTable } from './components/MandiComparisonTable';
 import { Store, ShieldAlert, AlertCircle, RefreshCw } from 'lucide-react';
 
 export const MarketComparisonPage: React.FC = () => {
+  const { language, t } = useLanguage();
   // 1. Interactive States
   const [selectedCropId, setSelectedCropId] = React.useState<string>('crop-soybean');
   const [quantity, setQuantity] = React.useState<number>(50);
@@ -86,10 +88,10 @@ export const MarketComparisonPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                APMC Market Comparison
+                {t('mandi.title')}
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                बाजारभाव आणि निव्वळ नफा तुलना — Compare real in-hand profits across Maharashtra Mandis
+                {t('mandi.subtitle')}
               </p>
             </div>
           </div>
