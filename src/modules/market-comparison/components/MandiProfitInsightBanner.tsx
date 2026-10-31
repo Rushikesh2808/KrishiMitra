@@ -106,3 +106,4 @@ export const MandiProfitInsightBanner: React.FC<MandiProfitInsightBannerProps> =
     </div>
   );
 };
+

@@ -118,3 +118,4 @@ export const MandiComparisonTable: React.FC<MandiComparisonTableProps> = ({
     </div>
   );
 };
+

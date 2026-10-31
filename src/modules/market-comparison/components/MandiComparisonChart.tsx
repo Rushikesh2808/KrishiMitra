@@ -154,3 +154,4 @@ export const MandiComparisonChart: React.FC<MandiComparisonChartProps> = ({
     </div>
   );
 };
+

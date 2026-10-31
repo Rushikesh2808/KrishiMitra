@@ -218,3 +218,4 @@ export const MandiComparisonCard: React.FC<MandiComparisonCardProps> = ({
     </div>
   );
 };
+
