@@ -1,0 +1,95 @@
+export type CropCategory = 'Cereals' | 'Pulses' | 'Oilseeds' | 'Vegetables' | 'Commercial';
+
+export interface Crop {
+  id: string;
+  name: string;
+  marathiName: string;
+  category: CropCategory;
+  standardUnit: 'Quintal' | 'Kg' | 'Ton';
+  icon: string;
+  typicalShelfLifeDays: number;
+}
+
+export interface Mandi {
+  id: string;
+  name: string;
+  district: string;
+  state: string;
+  distanceKm: number;
+  currentModalPrice: number; // ₹ per quintal
+  minPrice: number;
+  maxPrice: number;
+  dailyArrivalsTons: number;
+  lastUpdated: string;
+}
+
+export interface ForecastPoint {
+  day: number;
+  date: string;
+  estimatedPrice: number;
+  confidenceLower: number;
+  confidenceUpper: number;
+  confidenceScore: number; // 0 to 100%
+  expectedTrend: 'rising' | 'falling' | 'stable';
+  isSampleData: boolean;
+}
+
+export interface NetEarningsInput {
+  cropId: string;
+  quantityQuintals: number;
+  expectedPricePerQuintal: number;
+  distanceKm: number;
+  transportRatePerKmPerQuintal: number;
+  holdingDays: number;
+  storageCostPerDayPerQuintal: number;
+  mandiCessPercentage: number;
+  loadingUnloadingCostPerQuintal: number;
+  packagingCostPerQuintal: number;
+}
+
+export interface NetEarningsResult {
+  expectedRevenue: number;
+  transportationCost: number;
+  storageCost: number;
+  mandiCessCost: number;
+  handlingCost: number;
+  otherExpenses: number;
+  totalExpenses: number;
+  netEarnings: number;
+  netEarningsPerQuintal: number;
+}
+
+export interface SellRecommendation {
+  cropId: string;
+  action: 'SELL_NOW' | 'WAIT_SHORT_TERM' | 'WAIT_HARVEST_PEAK';
+  confidenceLevel: 'High' | 'Medium' | 'Low';
+  recommendedWindow: string; // e.g. "Next 2-3 Days"
+  projectedNetGainPerQuintal: number;
+  riskFactor: 'Low' | 'Moderate' | 'High';
+  rationale: string;
+  storageFeasibilityNotice: string;
+}
+
+export interface BuyerOffer {
+  id: string;
+  buyerName: string;
+  organizationType: 'FPO' | 'Agri-Processor' | 'Bulk Wholesaler' | 'Exporter';
+  location: string;
+  offeredPricePerQuintal: number;
+  minimumQuantityQuintals: number;
+  pickupOffered: boolean;
+  paymentTerms: string;
+  status: 'Open' | 'Negotiating' | 'Accepted' | 'Declined';
+}
+
+export interface FarmerProfile {
+  id: string;
+  fullName: string;
+  village: string;
+  taluka: string;
+  district: string;
+  state: string;
+  mobile: string;
+  preferredLanguage: 'English' | 'Marathi' | 'Hindi';
+  defaultCrops: string[];
+}
