@@ -213,3 +213,4 @@ export const get10DayCropForecast = (
     points,
   };
 };
+

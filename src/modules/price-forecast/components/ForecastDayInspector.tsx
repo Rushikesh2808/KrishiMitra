@@ -158,3 +158,4 @@ export const ForecastDayInspector: React.FC<ForecastDayInspectorProps> = ({
     </div>
   );
 };
+

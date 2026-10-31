@@ -120,3 +120,4 @@ export const ForecastSelector: React.FC<ForecastSelectorProps> = ({
     </div>
   );
 };
+

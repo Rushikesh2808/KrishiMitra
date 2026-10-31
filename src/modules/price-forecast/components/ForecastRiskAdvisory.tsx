@@ -121,3 +121,4 @@ export const ForecastRiskAdvisory: React.FC<ForecastRiskAdvisoryProps> = ({ repo
     </div>
   );
 };
+
