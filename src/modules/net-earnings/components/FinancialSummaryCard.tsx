@@ -128,3 +128,4 @@ export const FinancialSummaryCard: React.FC<FinancialSummaryCardProps> = ({
     </div>
   );
 };
+

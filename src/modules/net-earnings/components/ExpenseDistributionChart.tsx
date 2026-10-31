@@ -102,3 +102,4 @@ export const ExpenseDistributionChart: React.FC<ExpenseDistributionChartProps> =
     </div>
   );
 };
+

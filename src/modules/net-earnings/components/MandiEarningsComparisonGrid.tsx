@@ -108,3 +108,4 @@ export const MandiEarningsComparisonGrid: React.FC<MandiEarningsComparisonGridPr
     </div>
   );
 };
+

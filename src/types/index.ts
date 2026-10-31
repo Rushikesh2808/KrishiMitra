@@ -123,3 +123,30 @@ export interface FarmerProfile {
   preferredLanguage: 'English' | 'Marathi' | 'Hindi';
   defaultCrops: string[];
 }
+
+export type UserRole = 'FARMER' | 'FPO' | 'BUYER';
+
+export interface UserAccount {
+  id: string;
+  role: UserRole;
+  fullName: string;
+  mobile: string;
+  email?: string;
+  // Farmer fields
+  village?: string;
+  taluka?: string;
+  district?: string;
+  state?: string;
+  preferredCrops?: string[];
+  
+  // FPO fields
+  organizationName?: string;
+  authorizedPerson?: string;
+  registrationNumber?: string;
+  operatingLocation?: string;
+
+  // Buyer fields
+  businessName?: string;
+  contactPerson?: string;
+  buyerType?: 'Agri-Processor' | 'Bulk Wholesaler' | 'Exporter' | 'Retail Chain';
+}
