@@ -142,3 +142,4 @@ export const QuickAccessSection: React.FC = () => {
     </div>
   );
 };
+

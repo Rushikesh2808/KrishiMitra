@@ -201,3 +201,4 @@ export const NetEarningsSection: React.FC<NetEarningsSectionProps> = ({
     </div>
   );
 };
+

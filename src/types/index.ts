@@ -10,9 +10,18 @@ export interface Crop {
   typicalShelfLifeDays: number;
 }
 
+export interface FarmerVillage {
+  id: string;
+  name: string;
+  marathiName: string;
+  taluka: string;
+  district: string;
+}
+
 export interface Mandi {
   id: string;
   name: string;
+  marathiName: string;
   district: string;
   state: string;
   distanceKm: number;
@@ -59,6 +68,27 @@ export interface NetEarningsResult {
   netEarningsPerQuintal: number;
 }
 
+export interface MandiComparisonEntry {
+  mandiId: string;
+  mandiName: string;
+  marathiMandiName: string;
+  district: string;
+  distanceKm: number;
+  pricePerQuintal: number;
+  grossRevenue: number;
+  transportationCost: number;
+  otherExpenses: number;
+  mandiCess: number;
+  hamaliAndPackaging: number;
+  totalDeductions: number;
+  netEarnings: number;
+  netEarningsPerQuintal: number;
+  realizationPercentage: number;
+  isHighestNet: boolean;
+  isHighestGrossPrice: boolean;
+  isLowestTransportCost: boolean;
+}
+
 export interface SellRecommendation {
   cropId: string;
   action: 'SELL_NOW' | 'WAIT_SHORT_TERM' | 'WAIT_HARVEST_PEAK';
@@ -93,4 +123,3 @@ export interface FarmerProfile {
   preferredLanguage: 'English' | 'Marathi' | 'Hindi';
   defaultCrops: string[];
 }
-

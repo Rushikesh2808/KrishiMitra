@@ -140,3 +140,4 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
     </div>
   );
 };
+

@@ -178,3 +178,4 @@ export const MarketSnapshotSection: React.FC<MarketSnapshotSectionProps> = ({
     </div>
   );
 };
+
