@@ -84,3 +84,4 @@ export const PartialSellingCard: React.FC<PartialSellingCardProps> = ({
     </div>
   );
 };
+

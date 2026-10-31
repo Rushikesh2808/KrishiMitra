@@ -159,3 +159,4 @@ export const AdvisoryComparisonChart: React.FC<AdvisoryComparisonChartProps> = (
     </div>
   );
 };
+

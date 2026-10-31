@@ -1,8 +1,37 @@
 import { NetEarningsInput, NetEarningsResult, MandiComparisonEntry } from '../types';
 import { MANDI_LIST, DISTANCE_MATRIX, CROP_MANDI_PRICES } from '../data/mockData';
 
+export interface DetailedExpenseInputs {
+  cropId: string;
+  mandiId: string;
+  quantityQuintals: number;
+  pricePerQuintal: number;
+  transportCost: number;
+  loadingUnloadingCost: number;
+  storageCost: number;
+  labourCost: number;
+  marketFees: number;
+  miscellaneousCost: number;
+}
+
+export interface DetailedExpenseResult {
+  grossRevenue: number;
+  transportCost: number;
+  loadingUnloadingCost: number;
+  storageCost: number;
+  labourCost: number;
+  marketFees: number;
+  miscellaneousCost: number;
+  totalExpenses: number;
+  netEarnings: number;
+  totalExpensesPerQuintal: number;
+  netEarningsPerQuintal: number;
+  expensePercentage: number;
+  realizationPercentage: number;
+}
+
 /**
- * Transparent Net Earnings Calculation Formula:
+ * Transparent Net Earnings Calculation Formula (Legacy & Dashboard):
  * Net Earnings = Expected Revenue - Transportation Cost - Storage Cost - Other Expenses
  */
 export const calculateNetEarnings = (input: NetEarningsInput): NetEarningsResult => {
@@ -18,28 +47,14 @@ export const calculateNetEarnings = (input: NetEarningsInput): NetEarningsResult
     packagingCostPerQuintal,
   } = input;
 
-  // 1. Gross Expected Revenue
   const expectedRevenue = quantityQuintals * expectedPricePerQuintal;
-
-  // 2. Transportation Cost = Distance (km) * Rate per km per quintal * Quantity (Qtl)
   const transportationCost = distanceKm * transportRatePerKmPerQuintal * quantityQuintals;
-
-  // 3. Storage Cost = Holding Days * Storage Rate per day per quintal * Quantity (Qtl)
   const storageCost = holdingDays * storageCostPerDayPerQuintal * quantityQuintals;
-
-  // 4. Other Expenses
-  // Mandi Cess = % of gross revenue
   const mandiCessCost = (expectedRevenue * mandiCessPercentage) / 100;
-  // Handling (hamali/loading/unloading)
   const handlingCost = loadingUnloadingCostPerQuintal * quantityQuintals;
-  // Packaging / gunny bags
   const packagingCost = packagingCostPerQuintal * quantityQuintals;
   const otherExpenses = mandiCessCost + handlingCost + packagingCost;
-
-  // Total Expenses
   const totalExpenses = transportationCost + storageCost + otherExpenses;
-
-  // Realized Net Earnings
   const netEarnings = expectedRevenue - totalExpenses;
   const netEarningsPerQuintal = quantityQuintals > 0 ? netEarnings / quantityQuintals : 0;
 
@@ -53,6 +68,129 @@ export const calculateNetEarnings = (input: NetEarningsInput): NetEarningsResult
     totalExpenses,
     netEarnings,
     netEarningsPerQuintal,
+  };
+};
+
+/**
+ * Transparent Net Earnings Calculation Formula:
+ * Gross Revenue = Quantity * Selling Price
+ * Total Expenses = Transport + Loading/Unloading + Storage + Labour + Market Fees + Misc
+ * Net Earnings = Gross Revenue - Total Expenses
+ */
+export const calculateDetailedNetEarnings = (
+  inputs: DetailedExpenseInputs
+): DetailedExpenseResult => {
+  const {
+    quantityQuintals,
+    pricePerQuintal,
+    transportCost,
+    loadingUnloadingCost,
+    storageCost,
+    labourCost,
+    marketFees,
+    miscellaneousCost,
+  } = inputs;
+
+  const validQty = Math.max(1, quantityQuintals);
+  const validPrice = Math.max(0, pricePerQuintal);
+
+  // 1. Gross Expected Revenue
+  const grossRevenue = Math.round(validQty * validPrice);
+
+  // 2. Total Expenses
+  const totalExpenses = Math.max(
+    0,
+    Math.round(
+      transportCost +
+        loadingUnloadingCost +
+        storageCost +
+        labourCost +
+        marketFees +
+        miscellaneousCost
+    )
+  );
+
+  // 3. Final In-Hand Net Earnings
+  const netEarnings = grossRevenue - totalExpenses;
+
+  // 4. Per Quintal Metrics
+  const totalExpensesPerQuintal = validQty > 0 ? Math.round(totalExpenses / validQty) : 0;
+  const netEarningsPerQuintal = validQty > 0 ? Math.round(netEarnings / validQty) : 0;
+
+  // 5. Percentages
+  const expensePercentage =
+    grossRevenue > 0 ? Number(((totalExpenses / grossRevenue) * 100).toFixed(1)) : 0;
+  const realizationPercentage =
+    grossRevenue > 0 ? Number(((netEarnings / grossRevenue) * 100).toFixed(1)) : 0;
+
+  return {
+    grossRevenue,
+    transportCost,
+    loadingUnloadingCost,
+    storageCost,
+    labourCost,
+    marketFees,
+    miscellaneousCost,
+    totalExpenses,
+    netEarnings,
+    totalExpensesPerQuintal,
+    netEarningsPerQuintal,
+    expensePercentage,
+    realizationPercentage,
+  };
+};
+
+/**
+ * Auto-generate realistic APMC default expenses for pre-filling the calculator
+ */
+export const getDefaultMandiExpenseInputs = (
+  cropId: string,
+  mandiId: string,
+  quantityQuintals: number = 50,
+  villageId: string = 'v-niphad'
+): DetailedExpenseInputs => {
+  const cropPrices = CROP_MANDI_PRICES[cropId] || CROP_MANDI_PRICES['crop-soybean'];
+  const villageDistances = DISTANCE_MATRIX[villageId] || DISTANCE_MATRIX['v-niphad'];
+
+  const pricePerQuintal = cropPrices[mandiId]?.price ?? 4850;
+  const distanceKm = villageDistances[mandiId] ?? 35;
+
+  // Transport rate
+  const ratePerKm = distanceKm > 100 ? 2.4 : distanceKm > 40 ? 2.6 : 2.8;
+  const tollFee = mandiId === 'm-vashi' ? 1500 : 0;
+  const transportCost = Math.round(distanceKm * ratePerKm * quantityQuintals + tollFee);
+
+  // Loading/Hamali
+  let hamaliPerQuintal = 14;
+  if (mandiId === 'm-vashi') hamaliPerQuintal = 28;
+  else if (mandiId === 'm-pune') hamaliPerQuintal = 22;
+  else if (mandiId === 'm-nashik') hamaliPerQuintal = 18;
+  const loadingUnloadingCost = Math.round(hamaliPerQuintal * quantityQuintals);
+
+  // Storage cost (default 0 for immediate sale; farmer can edit)
+  const storageCost = 0;
+
+  // Labour / grading / weighing at farmgate & truck loading
+  const labourCost = Math.round(10 * quantityQuintals);
+
+  // Market Fees: APMC cess 1.05%
+  const grossEstimate = pricePerQuintal * quantityQuintals;
+  const marketFees = Math.round((grossEstimate * 1.05) / 100);
+
+  // Miscellaneous / Gunny Bags (baradaan)
+  const miscellaneousCost = Math.round(12 * quantityQuintals);
+
+  return {
+    cropId,
+    mandiId,
+    quantityQuintals,
+    pricePerQuintal,
+    transportCost,
+    loadingUnloadingCost,
+    storageCost,
+    labourCost,
+    marketFees,
+    miscellaneousCost,
   };
 };
 
@@ -72,10 +210,8 @@ export const computeMandiComparisons = (
     const priceData = cropPrices[mandi.id] ?? { price: 4800, dailyArrivalsTons: 300 };
     const pricePerQuintal = priceData.price;
 
-    // Gross Revenue = Market Price * Quantity
     const grossRevenue = pricePerQuintal * quantityQuintals;
 
-    // Dynamic transport rate based on distance brackets (economies of haulage scale)
     let ratePerKmPerQuintal = 2.8;
     let tollCorrridorFee = 0;
 
@@ -85,17 +221,14 @@ export const computeMandiComparisons = (
       ratePerKmPerQuintal = 2.6;
     }
 
-    // Vashi / Mumbai highway corridor toll & entry tax
     if (mandi.id === 'm-vashi') {
       tollCorrridorFee = 1500;
     }
 
     const transportationCost = Math.round(distanceKm * ratePerKmPerQuintal * quantityQuintals + tollCorrridorFee);
 
-    // Other Expenses: Mandi Cess (1.05%), Hamali / Labor, Packaging
     const mandiCess = Math.round((grossRevenue * 1.05) / 100);
 
-    // City mandis (Pune, Vashi) have regulated labor unions (Mathadi)
     let hamaliPerQuintal = 14;
     if (mandi.id === 'm-vashi') hamaliPerQuintal = 28;
     else if (mandi.id === 'm-pune') hamaliPerQuintal = 22;
@@ -132,7 +265,6 @@ export const computeMandiComparisons = (
     };
   });
 
-  // Determine highest net, highest gross price, and lowest transport cost
   let maxNet = -Infinity;
   let maxGrossPrice = -Infinity;
   let minTransport = Infinity;

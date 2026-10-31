@@ -136,3 +136,4 @@ export const AdvisoryHeroCard: React.FC<AdvisoryHeroCardProps> = ({ analysis }) 
     </div>
   );
 };
+
